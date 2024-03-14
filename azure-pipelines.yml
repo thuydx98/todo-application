@@ -1,0 +1,88 @@
+# variables:
+#   - group: nor-release-variables
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - refs/heads/master
+  paths:
+    include:
+      - azure-pipelines.yml
+      - src
+      - iac
+
+jobs:
+  - job: BuildAndTests
+    displayName: Build, Lint, Scan & Tests
+    pool:
+      vmImage: "windows-2022"
+    steps:
+      - checkout: self
+        displayName: Checkout source code
+        clean: true
+      - task: Bash@3
+        displayName: Environment Variables
+        inputs:
+          targetType: 'inline'
+          script: 'env | sort'
+      - task: UseDotNet@2
+        displayName: "Use .NET Core SDK 8.0"
+        inputs:
+          version: 8.0
+      - task: DotNetCoreCLI@2
+        displayName: Restore nuget packages
+        inputs:
+          command: restore
+          projects: "**/src/**/*.csproj"
+      - task: DotNetCoreCLI@2
+        displayName: Publish WebApi
+        inputs:
+          command: publish
+          publishWebProjects: false
+          zipAfterPublish: false
+          modifyOutputPath: false
+          projects: $(Build.SourcesDirectory)\src\Dekra.Todo.Api
+          arguments: --configuration release --no-restore --output $(Build.BinariesDirectory)\azure\WebApi
+      - task: Npm@1
+        displayName: Npm clean-install
+        inputs:
+          command: custom
+          workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
+          verbose: false
+          customCommand: clean-install
+      - task: Npm@1
+        displayName: Run Unit Tests
+        inputs:
+          command: custom
+          workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
+          verbose: false
+          customCommand: run test
+      - task: Npm@1
+        displayName: Npm Build Pro
+        inputs:
+          command: custom
+          workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
+          verbose: false
+          customCommand: run build --output-path $(Build.BinariesDirectory)\azure\WebApi\wwwroot
+      - task: CopyFiles@2
+        displayName: "Copy Files to: IaC"
+        inputs:
+          SourceFolder: $(Build.SourcesDirectory)\iac
+          TargetFolder: $(Build.BinariesDirectory)\azure\Iac
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Artifact: DropAzure"
+        inputs:
+          PathtoPublish: $(Build.BinariesDirectory)\azure
+          ArtifactName: dekra-drop
+  - job: DeployInfras
+    displayName: Deploy Infrastructure
+    dependsOn: PublishArtifacts
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - checkout: none
+      - task: DownloadBuildArtifacts@0
+        displayName: Download Build Artifacts
+        inputs:
+          artifactName: dekra-drop
