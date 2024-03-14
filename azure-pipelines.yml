@@ -77,7 +77,7 @@ jobs:
           ArtifactName: dekra-drop
   - job: DeployInfras
     displayName: Deploy Infrastructure
-    dependsOn: PublishArtifacts
+    dependsOn: BuildAndTests
     pool:
       vmImage: "ubuntu-latest"
     steps:
