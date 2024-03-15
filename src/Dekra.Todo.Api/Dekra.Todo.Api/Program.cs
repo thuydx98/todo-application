@@ -18,7 +18,7 @@ if (!builder.Environment.IsEnvironment("Local"))
     builder.Configuration.AddAzureKeyVault(new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"), new DefaultAzureCredential());
 }
 
-builder.Services.AddDbContext<DekraDbContext>(options => options.UseNpgsql(dbConnection));
+builder.Services.AddDbContext<DekraDbContext>(options => options.UseSqlServer(dbConnection));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork<DekraDbContext>>();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
