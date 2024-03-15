@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Dekra.Todo.Api.Data.Contracts.EntityFramework;
 using Dekra.Todo.Api.Data.Entities;
 using Dekra.Todo.Api.Data.EntityFramework;
@@ -11,6 +12,11 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var dbConnection = builder.Configuration[SettingConst.ConnectionStringsConst.Database];
+
+if (!builder.Environment.IsEnvironment("Local"))
+{
+    builder.Configuration.AddAzureKeyVault(new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"), new DefaultAzureCredential());
+}
 
 builder.Services.AddDbContext<DekraDbContext>(options => options.UseNpgsql(dbConnection));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork<DekraDbContext>>();
