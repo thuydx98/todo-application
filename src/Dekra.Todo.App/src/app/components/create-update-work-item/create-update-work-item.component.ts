@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { ApiRequestStatus, WorkItemState } from '../../store/state/work-item.state';
 import * as fromWorkItemState from '../../store/selectors/work-item.selectors';
-import { createWorkItem, selectWorkItem, updateWorkItem } from '../../store/actions/work-item.actions';
+import { createWorkItem, setSelectWorkItem, updateWorkItem } from '../../store/actions/work-item.actions';
 
 @Component({
   selector: 'app-create-update-work-item',
@@ -18,6 +18,8 @@ export class CreateUpdateWorkItemComponent implements OnInit {
   updateWorkItemStatus$?: Observable<ApiRequestStatus | undefined>;
   createUpdateErrorMessage$?: Observable<string | undefined>;
 
+  submittedEmptyContent = false;
+
   constructor(private store: Store<WorkItemState>) {}
 
   ngOnInit(): void {
@@ -28,10 +30,18 @@ export class CreateUpdateWorkItemComponent implements OnInit {
   }
 
   onCancel() {
-    this.store.dispatch(selectWorkItem({ payload: new WorkItem() }));
+    this.store.dispatch(setSelectWorkItem({ payload: new WorkItem() }));
+  }
+
+  onChangeWorkItem(event: Event, workItem: WorkItem) {
+    this.store.dispatch(setSelectWorkItem({ payload: { ...workItem, content: (event?.target as HTMLTextAreaElement).value } }));
   }
 
   onCreateUpdateWorkItem(workItem: WorkItem) {
+    this.submittedEmptyContent = !workItem.content;
+    if (this.submittedEmptyContent) {
+      return;
+    }
     const action = workItem.id ? updateWorkItem({ payload: { ...workItem } }) : createWorkItem({ payload: { ...workItem } });
     this.store.dispatch(action);
   }

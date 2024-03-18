@@ -6,15 +6,15 @@
     createUpdateErrorMessage: createUpdateErrorMessage$ | async,
   } as state"
 >
-  <div *ngIf="{ loading: state.createWorkItemStatus || state.updateWorkItemStatus } as variables" class="d-flex justify-content-center align-items-center">
-    <input type="text" class="form-control form-control-lg mr-3" placeholder="What do you need to do today?" (keyup.enter)="onCreateUpdateWorkItem(state.workItem!)" [(ngModel)]="state.workItem!.content" />
+  <div *ngIf="{ loading: state.createWorkItemStatus === ApiRequestStatus.Requesting } as variables" class="d-flex justify-content-center align-items-center">
+    <input id="inputContent" type="text" class="form-control form-control-lg mr-3" placeholder="What do you need to do today?" [value]="state.workItem?.content" (change)="onChangeWorkItem($event, state.workItem!)" (keyup.enter)="onCreateUpdateWorkItem(state.workItem!)" />
     <button class="btn btn-primary btn-lg ms-2" [disabled]="variables.loading" (click)="onCreateUpdateWorkItem(state.workItem!)">
       <span *ngIf="!variables.loading"> {{ state.workItem?.id ? "Update" : "Add" }}</span>
-      <span *ngIf="variables.loading" class="spinner-border spinner-border-sm mx-2 mb-1" role="status" aria-hidden="true"></span>
     </button>
     <button *ngIf="state.workItem?.id" class="btn btn-outline-danger btn-lg ms-2" [disabled]="variables.loading" (click)="onCancel()">
       <span *ngIf="true">Cancel</span>
     </button>
   </div>
+  <p class="text-font text-danger" *ngIf="submittedEmptyContent && !state.workItem?.content">Please enter your content</p>
   <p class="text-font text-danger mb-4">{{ state.createUpdateErrorMessage ?? "" }}</p>
 </ng-container>

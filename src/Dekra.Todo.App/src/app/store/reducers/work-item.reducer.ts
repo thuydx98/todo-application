@@ -16,9 +16,10 @@ const reducer = createReducer(
   initialState,
 
   // select work item
-  on(workItemActions.selectWorkItem, (state, { payload }) => ({
+  on(workItemActions.setSelectWorkItem, (state, { payload }) => ({
     ...state,
     selectedWorkItem: payload,
+    createUpdateErrorMessage: undefined
   })),
 
   // Get work items
@@ -45,6 +46,7 @@ const reducer = createReducer(
     ...state,
     createWorkItemStatus: ApiRequestStatus.Success,
     workItems: [payload, ...state.workItems],
+    selectedWorkItem: new WorkItem(),
   })),
   on(workItemActions.createWorkItemFail, (state) => ({
     ...state,
@@ -62,6 +64,7 @@ const reducer = createReducer(
     ...state,
     updateWorkItemStatus: ApiRequestStatus.Success,
     workItems: state.workItems.map((i) => (i.id === payload.id ? payload : i)),
+    selectedWorkItem: new WorkItem(),
   })),
   on(workItemActions.updateWorkItemFail, (state) => ({
     ...state,

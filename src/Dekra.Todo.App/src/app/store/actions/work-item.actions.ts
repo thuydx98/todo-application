@@ -2,7 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { WorkItem } from '../../models';
 
 
-export const selectWorkItem = createAction('[WorkItem] Get List Success', props<{ payload: WorkItem }>());
+export const setSelectWorkItem = createAction('[WorkItem] Set selected item', props<{ payload: WorkItem }>());
 
 
 export const getWorkItems = createAction('[WorkItem] Get List');

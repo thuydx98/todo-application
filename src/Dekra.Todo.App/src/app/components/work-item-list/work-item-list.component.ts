@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import { ApiRequestStatus, WorkItemState } from '../../store/state/work-item.state';
 import * as fromWorkItemState from '../../store/selectors/work-item.selectors';
 import { Observable } from 'rxjs';
-import { deleteWorkItem, getWorkItems, selectWorkItem, updateWorkItem } from '../../store/actions/work-item.actions';
+import { deleteWorkItem, getWorkItems, setSelectWorkItem, updateWorkItem } from '../../store/actions/work-item.actions';
 
 @Component({
   selector: 'app-work-item-list',
@@ -29,7 +29,8 @@ export class WorkItemListComponent implements OnInit {
   }
 
   onSelectWorkItem(workItem: WorkItem) {
-    this.store.dispatch(selectWorkItem({ payload: {...workItem }}));
+    this.store.dispatch(setSelectWorkItem({ payload: { ...workItem } }));
+    document.getElementById('inputContent')?.focus();
   }
 
   onDelete(workItem: WorkItem) {
@@ -39,6 +40,6 @@ export class WorkItemListComponent implements OnInit {
   }
 
   onMarkDone(workItem: WorkItem) {
-    this.store.dispatch(updateWorkItem({ payload: {...workItem, isCompleted: !workItem.isCompleted} }));
+    this.store.dispatch(updateWorkItem({ payload: { ...workItem, isCompleted: !workItem.isCompleted } }));
   }
 }

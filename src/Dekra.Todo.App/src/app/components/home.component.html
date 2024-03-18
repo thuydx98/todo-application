@@ -1,11 +1,11 @@
-<section class="vh-100" style="background-color: #e2d5de">
+<section class="min-vh-100" style="background-color: #006b52">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col col-xl-10">
         <div class="card" style="border-radius: 15px">
           <div class="card-body p-5 pt-4">
-            <div class="d-flex justify-content-between mb-4">
-              <h6 *ngIf="user$ | async as user" class="mt-3">Hi {{ user.name }}! Dekra Todo List</h6>
+            <div class="d-flex justify-content-between mb-5">
+              <h6 *ngIf="user$ | async as user" class="mt-3">Hi {{ user.name }}! Awesome Todo List</h6>
               <button type="button" class="btn text-danger" title="Logout" (click)="logout()">
                 <i class="bi bi-box-arrow-right" style="font-size: 1rem"></i>
                 Logout
