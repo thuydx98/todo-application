@@ -33,13 +33,13 @@ jobs:
           workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
           verbose: false
           customCommand: clean-install
-      # - task: Npm@1
-      #   displayName: Run Unit Tests
-      #   inputs:
-      #     command: custom
-      #     workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
-      #     verbose: false
-      #     customCommand: run test
+      - task: Npm@1
+        displayName: Run Unit Tests
+        inputs:
+          command: custom
+          workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
+          verbose: false
+          customCommand: run test
       - task: Npm@1
         displayName: Npm Build Pro
         inputs:
@@ -62,13 +62,13 @@ jobs:
         inputs:
           command: restore
           projects: "**/src/**/*.csproj"
-      # - task: DotNetCoreCLI@2
-      #   displayName: Run Test Projects
-      #   inputs:
-      #     command: test
-      #     projects: '**/*Tests/*.csproj'
-      #     publishTestResults: true
-      #     arguments: '--configuration debug --collect "Code coverage" --settings src/Dekra.Todo.Api/.runsettings'
+      - task: DotNetCoreCLI@2
+        displayName: Run Test Projects
+        inputs:
+          command: test
+          projects: '**/src/Dekra.Todo.Api/*Tests/*.csproj'
+          publishTestResults: true
+          arguments: '--configuration debug --collect "Code coverage" --settings src/Dekra.Todo.Api/.runsettings'
       - task: DotNetCoreCLI@2
         displayName: Publish WebApi
         inputs:
