@@ -1,7 +1,7 @@
 # Introduction
 
 This project is a simple todo web application applying some technologies below:
-- [Angular 17](https://blog.angular.io/introducing-angular-v17-4d7033312e4b?gi=1de0b9bac012)
+- [Angular 17](https://blog.angular.io/introducing-angular-v17-4d7033312e4b)
 - [.NET 8](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview)
 - [Terraform](https://www.terraform.io)
 - [Auth0](https://auth0.com) for authentication
@@ -13,16 +13,24 @@ This project is a simple todo web application applying some technologies below:
 
 
 ## Infrastructure
+![Infrastructure](./docs/images/infras.png)
+
+- [x] All resources located in the same resource group and the same location
+- [x] The SQL Server needs to set firewall rules and not open for public access
+- [x] All secret values used in WebApp need to be defined in IaC and not manually setup
+- [x] Key Vault needs to set access policies
+- [x] All resources and config need to be defined in IaC and don't need manual configuration
+- [ ] The database connection string needs to set RBAC for each login user
 
 ## CI/CD flows
+![CI/CD](./docs/images/cicd.png)
 
 
 # Setup infrastructure
-
 Base on your requirements and project requirements, please follow this [link](https://developer.hashicorp.com/terraform/tutorials/azure-get-started) to setup and manage your infrastructure state.
 
 
-# Todo Project - ASP.NET Core 8 - Angular 17
+# Awesome's Todo - .NET 8 & Angular 17
 
 ## 1. Project Structure
 
@@ -30,16 +38,16 @@ The project structure is designed to promote separation of concerns and modulari
 
 ```
 ├── Dekra.Todo.Api
+│   ├── Data                    # Contains contracts, entities, migrations, etc.
 │   ├── Business                # Contains business logic
-│   ├── Infrastructure          # Contains configurations, middlewares, etc.
-│   ├── API                     # Contains the api, including controllers, extensions, authentication, etc.
+│   ├── Infrastructure          # Contains configurations, middlewares, authentication, extensions, etc.
 │   └── Controllers             # Contains REST API endpoints
 ├── Dekra.Todo.App
 │   ├── helpers                 # Contains guards, interceptors ....
 │   ├── components              # Contains application components, modules
 │   ├── models                  # Contains data models
 │   ├── store                   # Contains logic to manage app state, using rxjs/state & rxjs/effects
-│   └── services                # Contains services
+│   └── services                # Contains services to communicate with REST API
 ```
 ## 2. Database Migration
 Note: Before apply change to your database, please update the connection string in `appsettings.json`
@@ -51,12 +59,12 @@ dotnet ef migrations add v.0.0.1 -o Data/Migrations
 
 Remove latest migration:
 ```powershell
-ef migrations remove
+dotnet ef migrations remove
 ```
 
-Apply migration to database:
+Apply changes to database:
 ```powershell
-dotnet ef database update -- --environment local
+dotnet ef database update --environment local
 ```
 
 ## 3. Build Local
@@ -64,40 +72,15 @@ dotnet ef database update -- --environment local
 To run this project, follow some steps below:
 
 1. Ensure the .NET 8 SDK and Node 16 are installed
-4. With Dekra.Todo.Api, update project variables in `appsettings.json`
-2. Open your terminal and move to src
-3. Build the solution to restore NuGet packages and compile the code.
-4. Configure the necessary database connection settings in the `appsettings.json` file of the API project.
-5. Run .Net Api as start up project
-6. restore npm packages in angular UI
-7. Run Angular by command
+2. With Dekra.Todo.Api, open your terminal and move to src/Dekra.Todo.Api/Dekra.Todo.Api
+3. Update project variables in `appsettings.json`
+4. Run project with `dotnet run` command
+5. With Dekra.Todo.App, open your terminal and move to src/Dekra.Todo.App
+6. Run `npm install` to install needed libraries
+7. Run `npm start` to start the Angular project
 
-
-## 4. FrontEnd
-After done with backend, start angular project by below scripts
-```shell
-npm install
-
-ng serve
-```
-
-## 5. KeyVaults
-If use want to use azure key vaults add key vault configuration inside appsetting.json and add access policy for the application
-
-![KeyVaults](./pictures/key_vault_access_policies.png?raw=true "KeyVaults")
-
-
-## 6. Output
+## 4. Output
 And here's how it looks like
 
-Login Screen try user01/user01 or user02/user02
-
-![LoginScreen](./pictures/Login_Screen.png?raw=true "LoginScreen")
-
-Todo Screen
-![TodoScreen](./pictures/Todo_Screen.png?raw=true "TodoScreen")
-
-## 7. UnitTest
-Currently, this project only write unit test for Backend
-
-![UnitTest](./pictures//UnitTest.png?raw=true "UnitTest")
+![Login Screen](./docs/images/login-screen.png)
+![Todo Screen](./docs/images/main-screen.png)
