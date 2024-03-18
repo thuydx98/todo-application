@@ -14,13 +14,14 @@ namespace Dekra.Todo.Api.Business.WorkItem.Commands.CreateWorkItem
         {
             if (request == null || request.UserId.IsEmpty() || request.WorkItem == null)
             {
-                return ApiResult.Failed(HttpCodeEnum.BadRequest, ErrorCodeEnum.BAD_REQUEST);
+                return ApiResult.Failed(ErrorCodeEnum.BAD_REQUEST);
             }
 
             if (request.WorkItem.Content.IsEmpty())
             {
-                return ApiResult.Failed(HttpCodeEnum.BadRequest, ErrorCodeEnum.MISSING_CONTENT_WORK_ITEM);
+                return ApiResult.Failed(ErrorCodeEnum.MISSING_CONTENT_WORK_ITEM);
             }
+
             var workItem = new Data.Entities.WorkItem
             {
                 UserId = request.UserId,

@@ -1,6 +1,3 @@
-# variables:
-#   - group: nor-release-variables
-
 trigger:
   batch: true
   branches:

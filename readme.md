@@ -102,3 +102,9 @@ And here's how it looks like: https://james-todo.azurewebsites.net
 
 ![Login Screen](./docs/images/login-screen.png)
 ![Todo Screen](./docs/images/main-screen.png)
+
+5. Unit Tests
+
+In the backend side, the project using xUnit for unit tests
+
+![xUnit](./docs/images/xUnit.PNG)
