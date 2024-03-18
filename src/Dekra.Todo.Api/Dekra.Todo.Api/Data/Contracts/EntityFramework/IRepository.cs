@@ -67,12 +67,6 @@ namespace Dekra.Todo.Api.Data.Contracts.EntityFramework
         void Insert(IEnumerable<T> entities);
         #endregion
 
-        #region Insert Async
-        ValueTask<EntityEntry<T>> InsertAsync(T entity, CancellationToken cancellationToken = default);
-        Task InsertAsync(params T[] entities);
-        Task InsertAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
-        #endregion
-
         #region Update
         T Update(T entity);
         void Update(params T[] entities);

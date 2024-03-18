@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Dekra.Todo.Api.Business.WorkItem.Commands.DeleteWorkItem
 {
-    public sealed record DeleteWorkItemCommand(Guid Id, string UserId) : IRequest<ApiResult>;
+    public sealed record DeleteWorkItemCommand(Guid WorkItemId, string UserId) : IRequest<ApiResult>;
 }

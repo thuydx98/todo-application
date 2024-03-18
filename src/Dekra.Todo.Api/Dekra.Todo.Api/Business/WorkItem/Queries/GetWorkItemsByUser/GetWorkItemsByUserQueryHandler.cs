@@ -5,26 +5,25 @@ using MediatR;
 
 namespace Dekra.Todo.Api.Business.WorkItem.Queries.GetWorkItemsByUser
 {
-    public class GetWorkItemsByUserQueryHandler : IRequestHandler<GetWorkItemsByUserQuery, ApiResult>
+    public class GetWorkItemsByUserQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetWorkItemsByUserQuery, ApiResult>
     {
-        private readonly IUnitOfWork unitOfWork;
-
-        public GetWorkItemsByUserQueryHandler(IUnitOfWork unitOfWork)
-        {
-            this.unitOfWork = unitOfWork;
-        }
+        private readonly IUnitOfWork unitOfWork = unitOfWork;
 
         public async Task<ApiResult> Handle(GetWorkItemsByUserQuery request, CancellationToken cancellationToken)
         {
-            var transactions = await this.unitOfWork.GetRepository<Data.Entities.WorkItem>().GetListAsync<WorkItemViewModel>(
+            var workItems = await this.unitOfWork.GetRepository<Data.Entities.WorkItem>().GetListAsync<WorkItemViewModel>(
                 selector: n => new WorkItemViewModel()
                 {
                     Id = n.Id,
+                    Content = n.Content,
+                    CreatedAt = n.CreatedAt,
+                    IsCompleted = n.IsCompleted,
                 },
+                predicate: x => x.UserId == request.UserId && !x.IsDeleted,
                 orderBy: x => x.OrderByDescending(o => o.CreatedAt),
                 cancellationToken: cancellationToken);
 
-            return ApiResult.Succeeded(transactions);
+            return ApiResult.Succeeded(workItems);
         }
     }
 }

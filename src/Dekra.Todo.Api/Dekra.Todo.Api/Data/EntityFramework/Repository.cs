@@ -183,23 +183,6 @@ namespace Dekra.Todo.Api.Data.EntityFramework
         }
         #endregion
 
-        #region Insert Async
-        public virtual ValueTask<EntityEntry<T>> InsertAsync(T entity, CancellationToken cancellationToken = default)
-        {
-            return _dbSet.AddAsync(entity, cancellationToken);
-        }
-
-        public virtual Task InsertAsync(params T[] entities)
-        {
-            return _dbSet.AddRangeAsync(entities);
-        }
-
-        public virtual Task InsertAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
-        {
-            return _dbSet.AddRangeAsync(entities, cancellationToken);
-        }
-        #endregion
-
         #region Update
         public T Update(T entity)
         {

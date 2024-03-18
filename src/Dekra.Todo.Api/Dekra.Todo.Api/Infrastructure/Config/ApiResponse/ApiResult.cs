@@ -9,34 +9,31 @@ namespace Dekra.Todo.Api.Infrastructure.Config.ApiResponse
         public HttpCodeEnum HttpCode { get; private set; }
         public ApiJsonResult<object>? Value { get; private set; }
 
-        public static ApiResult Succeeded(object? data = null)
+        public static ApiResult Succeeded(object? data = null) => new()
         {
-            return new ApiResult
-            {
-                HttpCode = HttpCodeEnum.OK,
-                Value = new ApiJsonResult<object>(data),
-            };
-        }
+            HttpCode = HttpCodeEnum.OK,
+            Value = new ApiJsonResult<object>(data),
+        };
 
-        public static ApiResult Failed(HttpCodeEnum httpCode, object result = null) => new ApiResult
+        public static ApiResult Failed(HttpCodeEnum httpCode, object result = null) => new()
         {
             HttpCode = httpCode,
             Value = new ApiJsonResult<object>((int)httpCode, httpCode.GetDescription(), result),
         };
 
-        public static ApiResult Failed(HttpCodeEnum httpCode, string errorMessage) => new ApiResult
+        public static ApiResult Failed(HttpCodeEnum httpCode, string errorMessage) => new()
         {
             HttpCode = httpCode,
             Value = new ApiJsonResult<object>((int)httpCode, errorMessage),
         };
 
-        public static ApiResult Failed(ErrorCodeEnum errorCode, HttpCodeEnum httpCode = HttpCodeEnum.BadRequest) => new ApiResult
+        public static ApiResult Failed(ErrorCodeEnum errorCode, HttpCodeEnum httpCode = HttpCodeEnum.BadRequest) => new()
         {
             HttpCode = httpCode,
             Value = new ApiJsonResult<object>((int)errorCode, errorCode.GetDescription()),
         };
 
-        public static ApiResult Failed(ErrorCodeEnum errorCode, object result, HttpCodeEnum httpCode = HttpCodeEnum.BadRequest) => new ApiResult
+        public static ApiResult Failed(ErrorCodeEnum errorCode, object result, HttpCodeEnum httpCode = HttpCodeEnum.BadRequest) => new()
         {
             HttpCode = httpCode,
             Value = new ApiJsonResult<object>((int)errorCode, errorCode.GetDescription(), result)
@@ -46,7 +43,7 @@ namespace Dekra.Todo.Api.Infrastructure.Config.ApiResponse
         {
             context.HttpContext.Response.StatusCode = (int)HttpCode;
 
-            var result = new ObjectResult(Value.Success ? Value.Result : Value)
+            var result = new ObjectResult(Value)
             {
                 StatusCode = (int)HttpCode,
             };

@@ -1,6 +1,6 @@
-export interface WorkItem {
-  id: string;
-  content: string;
-  isCompleted: string;
-  createdAt: Date;
+export class WorkItem {
+  public id?: string;
+  public content: string = '';
+  public isCompleted: boolean = false;
+  public createdAt?: Date;
 }

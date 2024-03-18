@@ -1,20 +1,17 @@
-import { Component } from '@angular/core';
-import { WorkItem } from '../models';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
 })
-export class HomeComponent {
-  selectedWorkItem?: WorkItem;
+export class HomeComponent implements OnInit {
+  user$?: Observable<any>;
+  constructor(private auth: AuthService) {}
 
-  constructor(public auth: AuthService) {}
-
-  setSelectedWorkItem(workItem: WorkItem) {
-    console.log(workItem);
-    this.selectedWorkItem = Object.assign({}, workItem);
+  ngOnInit(): void {
+    this.user$ = this.auth.user$;
   }
 
   logout(): void {

@@ -11,12 +11,12 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-var dbConnection = builder.Configuration[SettingConst.ConnectionStringsConst.Database];
-
 if (!builder.Environment.IsEnvironment("Local"))
 {
     builder.Configuration.AddAzureKeyVault(new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"), new DefaultAzureCredential());
 }
+
+var dbConnection = builder.Configuration[SettingConst.ConnectionStringsConst.Database];
 
 builder.Services.AddDbContext<DekraDbContext>(options => options.UseSqlServer(dbConnection));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork<DekraDbContext>>();
@@ -38,8 +38,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseCors(ConfigConst.CorsPolicy);
+app.UseMiddleware<RouteMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication().UseAuthorization();
 app.MapControllers().RequireAuthorization();

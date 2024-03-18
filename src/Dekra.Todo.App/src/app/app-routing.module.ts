@@ -12,12 +12,12 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'work-items'
-  }
+    redirectTo: 'work-items',
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

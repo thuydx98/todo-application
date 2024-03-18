@@ -1,60 +1,44 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { ApiResult, WorkItem } from '../../models';
-import { WorkItemService } from '../../services/work-item.service';
-import { catchError, map, of } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { WorkItem } from '../../models';
+import { Store, select } from '@ngrx/store';
+import { ApiRequestStatus, WorkItemState } from '../../store/state/work-item.state';
+import * as fromWorkItemState from '../../store/selectors/work-item.selectors';
+import { Observable } from 'rxjs';
+import { deleteWorkItem, getWorkItems, selectWorkItem, updateWorkItem } from '../../store/actions/work-item.actions';
 
 @Component({
   selector: 'app-work-item-list',
   templateUrl: './work-item-list.component.html',
-  styleUrl: './work-item-list.component.css',
 })
 export class WorkItemListComponent implements OnInit {
-  @Output() onSelect: EventEmitter<any> = new EventEmitter();
+  ApiRequestStatus = ApiRequestStatus;
 
-  workItems?: ApiResult<WorkItem[]>;
+  workItems$?: Observable<WorkItem[]>;
+  getWorkItemStatus$?: Observable<ApiRequestStatus | undefined>;
 
-  constructor(
-    private workItemService: WorkItemService,
-    private toastr: ToastrService
-  ) {}
+  constructor(private store: Store<WorkItemState>) {}
 
   ngOnInit() {
-    this.workItems = undefined;
-    this.workItemService.getListWorkItem().subscribe(
-      (response) => {
-        this.workItems = response;
-      },
-      (error) => {
-        this.workItems = {
-          success: false,
-          errorCode: 0,
-          errorMessage: undefined,
-          result: [],
-        };
-      }
-    );
+    this.onLoadWorkItems();
+    this.workItems$ = this.store.pipe(select(fromWorkItemState.workItems));
+    this.getWorkItemStatus$ = this.store.pipe(select(fromWorkItemState.getWorkItemStatus));
+  }
+
+  onLoadWorkItems() {
+    this.store.dispatch(getWorkItems());
   }
 
   onSelectWorkItem(workItem: WorkItem) {
-    this.onSelect.emit(Object.assign({}, workItem));
+    this.store.dispatch(selectWorkItem({ payload: {...workItem }}));
   }
 
   onDelete(workItem: WorkItem) {
     if (confirm(`Are you sure to delete "${workItem.content}" ?`)) {
-      this.workItemService.deleteWorkItem(workItem.id).subscribe(
-        (res) => {
-          this.toastr.success('Detete work item succeeded', 'Work Items');
-          if (this.workItems) {
-            this.workItems.result = this.workItems?.result.filter(
-              (i) => i.id !== workItem.id
-            );
-          }
-        },
-        (err) => {
-          this.toastr.error('Detete work item failed', 'Work Items');
-        }
-      );
+      this.store.dispatch(deleteWorkItem({ payload: workItem }));
     }
+  }
+
+  onMarkDone(workItem: WorkItem) {
+    this.store.dispatch(updateWorkItem({ payload: {...workItem, isCompleted: !workItem.isCompleted} }));
   }
 }

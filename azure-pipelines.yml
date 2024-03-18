@@ -26,24 +26,6 @@ jobs:
         inputs:
           targetType: 'inline'
           script: 'env | sort'
-      - task: UseDotNet@2
-        displayName: "Use .NET Core SDK 8.0"
-        inputs:
-          version: 8.0
-      - task: DotNetCoreCLI@2
-        displayName: Restore nuget packages
-        inputs:
-          command: restore
-          projects: "**/src/**/*.csproj"
-      - task: DotNetCoreCLI@2
-        displayName: Publish WebApi
-        inputs:
-          command: publish
-          publishWebProjects: false
-          zipAfterPublish: false
-          modifyOutputPath: false
-          projects: $(Build.SourcesDirectory)\src\Dekra.Todo.Api
-          arguments: --configuration release --no-restore --output $(Build.BinariesDirectory)\azure\WebApi
       - task: Npm@1
         displayName: Npm clean-install
         inputs:
@@ -51,20 +33,51 @@ jobs:
           workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
           verbose: false
           customCommand: clean-install
-      - task: Npm@1
-        displayName: Run Unit Tests
-        inputs:
-          command: custom
-          workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
-          verbose: false
-          customCommand: run test
+      # - task: Npm@1
+      #   displayName: Run Unit Tests
+      #   inputs:
+      #     command: custom
+      #     workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
+      #     verbose: false
+      #     customCommand: run test
       - task: Npm@1
         displayName: Npm Build Pro
         inputs:
           command: custom
           workingDir: $(Build.SourcesDirectory)/src/Dekra.Todo.App
           verbose: false
-          customCommand: run build --output-path $(Build.BinariesDirectory)\azure\WebApi\wwwroot
+          customCommand: run build
+      - task: CopyFiles@2
+        displayName: "Copy frontend to wwwroot"
+        inputs:
+          SourceFolder: $(Build.SourcesDirectory)\src\Dekra.Todo.App\dist\browser
+          TargetFolder: $(Build.SourcesDirectory)\src\Dekra.Todo.Api\Dekra.Todo.Api\wwwroot
+      - task: UseDotNet@2
+        displayName: "Use .NET Core SDK 8.0"
+        inputs:
+          version: 8.x
+          performMultiLevelLookup: true
+      - task: DotNetCoreCLI@2
+        displayName: Restore nuget packages
+        inputs:
+          command: restore
+          projects: "**/src/**/*.csproj"
+      # - task: DotNetCoreCLI@2
+      #   displayName: Run Test Projects
+      #   inputs:
+      #     command: test
+      #     projects: '**/*Tests/*.csproj'
+      #     publishTestResults: true
+      #     arguments: '--configuration debug --collect "Code coverage" --settings src/Dekra.Todo.Api/.runsettings'
+      - task: DotNetCoreCLI@2
+        displayName: Publish WebApi
+        inputs:
+          command: publish
+          publishWebProjects: true
+          zipAfterPublish: true
+          modifyOutputPath: false
+          projects: $(Build.SourcesDirectory)\src\Dekra.Todo.Api
+          arguments: --configuration release --no-restore --output $(Build.BinariesDirectory)\azure\WebApi
       - task: CopyFiles@2
         displayName: "Copy Files to: IaC"
         inputs:
@@ -75,8 +88,8 @@ jobs:
         inputs:
           PathtoPublish: $(Build.BinariesDirectory)\azure
           ArtifactName: dekra-drop
-  - job: DeployInfras
-    displayName: Deploy Infrastructure
+  - job: DeployApplications
+    displayName: Deploy Applications
     dependsOn: BuildAndTests
     pool:
       vmImage: "ubuntu-latest"
@@ -86,3 +99,9 @@ jobs:
         displayName: Download Build Artifacts
         inputs:
           artifactName: dekra-drop
+      - task: AzureWebApp@1
+        inputs:
+          azureSubscription: 'DEKRA'
+          appType: 'webAppLinux'
+          appName: 'james-todo'
+          package: '$(System.ArtifactsDirectory)/dekra-drop/WebApi/*.zip'

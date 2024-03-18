@@ -7,7 +7,6 @@ using Dekra.Todo.Api.Business.WorkItem.Queries.GetWorkItemsByUser;
 using Dekra.Todo.Api.Business.WorkItem.Commands.DeleteWorkItem;
 using Dekra.Todo.Api.Infrastructure.Utilities.Extensions;
 using Dekra.Todo.Api.Business.WorkItem.Commands.UpdateWorkItem;
-using Dekra.Todo.Api.Business.WorkItem.DTO;
 using Dekra.Todo.Api.Business.WorkItem.Commands.CreateWorkItem;
 
 namespace Dekra.Todo.Api.Controllers
@@ -28,7 +27,7 @@ namespace Dekra.Todo.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWorkItem(CreateWorkItemRequestDto workItem)
+        public async Task<IActionResult> CreateWorkItem(CreateWorkItemRequestModel workItem)
         {
             if (this.Auth0UserId.IsEmpty())
             {
@@ -39,14 +38,14 @@ namespace Dekra.Todo.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateWorkItem(UpdateWorkItemRequestDto workItem)
+        public async Task<IActionResult> UpdateWorkItem(Guid id, UpdateWorkItemRequestModel workItem)
         {
             if (this.Auth0UserId.IsEmpty())
             {
                 return ApiResult.Failed(HttpCodeEnum.Unauthorized);
             }
 
-            return await this.Mediator.Send(new UpdateWorkItemCommand(WorkItem: workItem, UserId: this.Auth0UserId!));
+            return await this.Mediator.Send(new UpdateWorkItemCommand(WorkItemId: id, WorkItem: workItem, UserId: this.Auth0UserId!));
         }
 
         [HttpDelete("{id}")]
@@ -57,7 +56,7 @@ namespace Dekra.Todo.Api.Controllers
                 return ApiResult.Failed(HttpCodeEnum.Unauthorized);
             }
 
-            return await this.Mediator.Send(new DeleteWorkItemCommand(Id: id, UserId: this.Auth0UserId!));
+            return await this.Mediator.Send(new DeleteWorkItemCommand(WorkItemId: id, UserId: this.Auth0UserId!));
         }
     }
 }

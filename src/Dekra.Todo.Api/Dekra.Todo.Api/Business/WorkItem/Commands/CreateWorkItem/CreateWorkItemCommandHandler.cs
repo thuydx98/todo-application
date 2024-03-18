@@ -1,22 +1,37 @@
-﻿using Dekra.Todo.Api.Business.WorkItem.ViewModels;
-using Dekra.Todo.Api.Data.Contracts.EntityFramework;
+﻿using Dekra.Todo.Api.Data.Contracts.EntityFramework;
 using Dekra.Todo.Api.Infrastructure.Config.ApiResponse;
+using Dekra.Todo.Api.Infrastructure.Config.ApiResponse.Object;
+using Dekra.Todo.Api.Infrastructure.Utilities.Extensions;
 using MediatR;
 
 namespace Dekra.Todo.Api.Business.WorkItem.Commands.CreateWorkItem
 {
-    public class CreateWorkItemCommandHandler : IRequestHandler<CreateWorkItemCommand, ApiResult>
+    public class CreateWorkItemCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<CreateWorkItemCommand, ApiResult>
     {
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWork unitOfWork = unitOfWork;
 
-        public CreateWorkItemCommandHandler(IUnitOfWork unitOfWork)
+        public async Task<ApiResult> Handle(CreateWorkItemCommand request, CancellationToken cancellationToken)
         {
-            this.unitOfWork = unitOfWork;
-        }
+            if (request == null || request.UserId.IsEmpty() || request.WorkItem == null)
+            {
+                return ApiResult.Failed(HttpCodeEnum.BadRequest, ErrorCodeEnum.BAD_REQUEST);
+            }
 
-        public Task<ApiResult> Handle(CreateWorkItemCommand request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            if (request.WorkItem.Content.IsEmpty())
+            {
+                return ApiResult.Failed(HttpCodeEnum.BadRequest, ErrorCodeEnum.MISSING_CONTENT_WORK_ITEM);
+            }
+            var workItem = new Data.Entities.WorkItem
+            {
+                UserId = request.UserId,
+                Content = request.WorkItem.Content,
+            };
+
+            unitOfWork.GetRepository<Data.Entities.WorkItem>().Insert(workItem);
+
+            await unitOfWork.CommitAsync();
+
+            return ApiResult.Succeeded(workItem);
         }
     }
 }

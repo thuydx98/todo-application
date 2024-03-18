@@ -7,19 +7,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { HomeComponent } from './components/home.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CreateUpdateWorkItemComponent } from './components/create-update-work-item/create-update-work-item.component';
 import { WorkItemListComponent } from './components/work-item-list/work-item-list.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ToastrModule } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
+import { workItemReducer } from './store/reducers/work-item.reducer';
+import { WorkItemEffects } from './store/effects/work-item.effects';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    CreateUpdateWorkItemComponent,
-    WorkItemListComponent,
-  ],
+  declarations: [AppComponent, HomeComponent, CreateUpdateWorkItemComponent, WorkItemListComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -32,17 +30,16 @@ import { ToastrModule } from 'ngx-toastr';
         scope: 'openid profile email offline_access',
       },
       httpInterceptor: {
-        allowedList: [environment.apiUrl + "/*"]
+        allowedList: [environment.apiUrl + '/*'],
       },
     }),
-    NgbModule,
+    StoreModule.forRoot({ workItem: workItemReducer }),
+    EffectsModule.forRoot([WorkItemEffects]),
+    FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot(),
   ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },
-  ],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

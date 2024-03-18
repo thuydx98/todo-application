@@ -28,7 +28,7 @@ namespace Dekra.Todo.Api.Data.EntityFramework
 
         public async Task<int> CommitAsync()
         {
-            //TrackChanges();
+            TrackChanges();
             return await Context.SaveChangesAsync();
         }
 
