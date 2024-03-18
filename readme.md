@@ -1,6 +1,6 @@
 # Introduction
 
-This project is a simple todo web application applying some technologies below:
+This project is a simple todo web application which is hosting at https://james-todo.azurewebsites.net, applying some technologies below:
 - [Angular 17](https://blog.angular.io/introducing-angular-v17-4d7033312e4b)
 - [.NET 8](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview)
 - [Terraform](https://www.terraform.io)
@@ -11,6 +11,24 @@ This project is a simple todo web application applying some technologies below:
     - [Azure SQL Database](https://azure.microsoft.com/en-us/products/azure-sql/database)
     - [Azure Key Vault](https://azure.microsoft.com/en-us/products/key-vault)
 
+## Features:
+- [x] Register using personnel email
+- [x] Login using Username-Password-Authentication or Google-Authentication
+- [x] Create/Update/Delete work items
+- [x] Mark as done work item
+
+## Inside technologies
+
+- Frontend:
+    - Angular Framework 17
+    - Bootstrap
+    - Bootstrap Icons
+    - rxjs/state & rxjs/effects
+- Backend:
+    - .NET 8 LTS
+    - Entity Framework, Code First
+    - Design patterns: UnitOfWork, Repository, Factory, CQRS, Mediator
+    - Microsoft SQL Server
 
 ## Infrastructure
 ![Infrastructure](./docs/images/infras.png)
@@ -42,12 +60,12 @@ The project structure is designed to promote separation of concerns and modulari
 │   ├── Business                # Contains business logic
 │   ├── Infrastructure          # Contains configurations, middlewares, authentication, extensions, etc.
 │   └── Controllers             # Contains REST API endpoints
-├── Dekra.Todo.App
-│   ├── helpers                 # Contains guards, interceptors ....
-│   ├── components              # Contains application components, modules
-│   ├── models                  # Contains data models
-│   ├── store                   # Contains logic to manage app state, using rxjs/state & rxjs/effects
-│   └── services                # Contains services to communicate with REST API
+└── Dekra.Todo.App
+    ├── helpers                 # Contains guards, interceptors ....
+    ├── components              # Contains application components, modules
+    ├── models                  # Contains data models
+    ├── store                   # Contains logic to manage app state, using rxjs/state & rxjs/effects
+    └── services                # Contains services to communicate with REST API
 ```
 ## 2. Database Migration
 Note: Before apply change to your database, please update the connection string in `appsettings.json`
@@ -80,7 +98,7 @@ To run this project, follow some steps below:
 7. Run `npm start` to start the Angular project
 
 ## 4. Output
-And here's how it looks like
+And here's how it looks like: https://james-todo.azurewebsites.net
 
 ![Login Screen](./docs/images/login-screen.png)
 ![Todo Screen](./docs/images/main-screen.png)
