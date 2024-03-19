@@ -5,9 +5,7 @@ trigger:
       - refs/heads/master
   paths:
     include:
-      - azure-pipelines.yml
       - src
-      - iac
 
 jobs:
   - job: BuildAndTests

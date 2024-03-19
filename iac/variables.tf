@@ -30,7 +30,7 @@ variable "service_plan_sku_name" {
   description = "SKU name of service plan"
   type        = string
   nullable    = false
-  default = "F1"
+  default = "B1"
 }
 
 variable "service_plan_os_type" {

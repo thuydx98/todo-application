@@ -24,6 +24,7 @@ module "app_service" {
   web_app_name          = var.web_app_name
   dotnet_version        = var.dotnet_version
   keyvault_name         = var.keyvault_name
+  web_app_always_on     = true
 }
 
 module "mssql" {

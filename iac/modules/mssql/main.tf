@@ -23,8 +23,10 @@ resource "azurerm_mssql_firewall_rule" "allow_azure_resources" {
 }
 
 resource "azurerm_mssql_database" "mssql" {
-  server_id = azurerm_mssql_server.mssql_server.id
-  name      = var.database_name
-  collation = var.database_collation
-  sku_name  = var.database_sku
+  server_id            = azurerm_mssql_server.mssql_server.id
+  name                 = var.database_name
+  collation            = var.database_collation
+  sku_name             = var.database_sku
+  max_size_gb          = 2
+  storage_account_type = "Local"
 }
